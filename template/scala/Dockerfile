@@ -1,13 +1,16 @@
-FROM bde2020/spark-submit:2.4.5-hadoop2.7
+FROM spark-submit:2.4.5-hadoop2.7
 
 LABEL maintainer="Gezim Sejdiu <g.sejdiu@gmail.com>, Giannis Mouchakis <gmouchakis@gmail.com>"
 
-ARG SBT_VERSION
-ENV SBT_VERSION=${SBT_VERSION:-1.2.6}
+ADD https://raw.githubusercontent.com/guilhem/apt-get-install/master/apt-get-install /usr/bin/
+RUN chmod +x /usr/bin/apt-get-install
 
-RUN wget -O - https://piccolo.link/sbt-1.2.6.tgz | gunzip | tar -x -C /usr/local
+RUN apt-get-install -y apt-transport-https
 
-ENV PATH /usr/local/sbt/bin:${PATH}
+RUN echo "deb https://dl.bintray.com/sbt/debian /" > /etc/apt/sources.list.d/sbt.list \
+      && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+
+RUN apt-get-install sbt
 
 WORKDIR /app
 
