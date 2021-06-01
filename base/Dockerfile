@@ -26,6 +26,26 @@ RUN apk add --no-cache curl bash openjdk8-jre python3 py-pip nss libc6-compat \
       #&& jar uf /spark/jars/spark-core_2.11-${SPARK_VERSION}.jar org/apache/spark/ui/static/timeline-view.css \
       && cd /
 
+ENV SCALA_VERSION=2.13.6 \
+    SCALA_HOME=/usr/share/scala \
+    SBT_VERSION=1.5.3
+
+RUN apk add --no-cache --virtual=.build-dependencies wget ca-certificates && \
+    apk add --no-cache bash curl jq && \
+    cd "/tmp" && \
+    wget --no-verbose "https://downloads.lightbend.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz" && \
+    tar xzf "scala-${SCALA_VERSION}.tgz" && \
+    mkdir "${SCALA_HOME}" && \
+    rm "/tmp/scala-${SCALA_VERSION}/bin/"*.bat && \
+    mv "/tmp/scala-${SCALA_VERSION}/bin" "/tmp/scala-${SCALA_VERSION}/lib" "${SCALA_HOME}" && \
+    ln -s "${SCALA_HOME}/bin/"* "/usr/bin/" && \
+    apk del .build-dependencies && \
+    rm -rf "/tmp/"*
+ 
+RUN apk update && apk add ca-certificates wget tar && mkdir -p "/usr/local/sbt" && wget -qO - --no-check-certificate "https://github.com/sbt/sbt/releases/download/v${SBT_VERSION}/sbt-${SBT_VERSION}.tgz" | tar xz -C /usr/local/sbt --strip-components=1
+
+ENV PATH /usr/local/sbt/bin:$PATH
+
 #Give permission to execute scripts
 RUN chmod +x /wait-for-step.sh && chmod +x /execute-step.sh && chmod +x /finish-step.sh
 
