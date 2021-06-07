@@ -1,4 +1,5 @@
-FROM spark-base:2.4.5-hadoop2.7
+ARG TAG
+FROM spark-base:${TAG}
 
 LABEL maintainer="Gezim Sejdiu <g.sejdiu@gmail.com>, Giannis Mouchakis <gmouchakis@gmail.com>"
 

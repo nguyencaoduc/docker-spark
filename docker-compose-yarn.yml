@@ -1,0 +1,73 @@
+version: '3'
+services:
+  spark-yarn-submit:
+    image: spark-yarn-submit:${SPARK_TAG}
+    container_name: spark-yarn-submit
+    command: /bin/bash
+    ports:
+      - "4040:4040"
+    depends_on:
+      - namenode
+      - datanode
+      - resourcemanager
+      - nodemanager
+      - historyserver      
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
+  namenode:
+    image: hadoop-namenode:${HADOOP_TAG}
+    container_name: namenode
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=test
+    ports:
+      - "50070:50070"      
+    env_file:
+      - ./hadoop.env
+
+  datanode:
+    image: hadoop-datanode:${HADOOP_TAG}
+    container_name: datanode
+    volumes:
+      - hadoop_datanode:/hadoop/dfs/data
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070"
+    ports:
+      - "50075:50075"       
+    env_file:
+      - ./hadoop.env
+  
+  resourcemanager:
+    image: hadoop-resourcemanager:${HADOOP_TAG}
+    container_name: resourcemanager
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
+    ports:
+      - "8088:8088"
+      - "8032:8032"      
+    env_file:
+      - ./hadoop.env
+
+  nodemanager:
+    image: hadoop-nodemanager:${HADOOP_TAG}
+    container_name: nodemanager
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
+    env_file:
+      - ./hadoop.env
+  
+  historyserver:
+    image: hadoop-historyserver:${HADOOP_TAG}
+    container_name: historyserver
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075 resourcemanager:8088"
+    volumes:
+      - hadoop_historyserver:/hadoop/yarn/timeline
+    env_file:
+      - ./hadoop.env
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:
+  hadoop_historyserver:      
