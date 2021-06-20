@@ -7,13 +7,13 @@ build:
 	sh build.sh
 
 start:
-	HADOOP_TAG=${HADOOP_TAG} SPARK_TAG=${TAG} docker compose up spark-master spark-worker
+	SPARK_TAG=${TAG} docker compose up spark-master spark-worker
 
 run:
-	HADOOP_TAG=${HADOOP_TAG} SPARK_TAG=${TAG} docker compose run --rm -p 4040:4040 spark-submit
+	SPARK_TAG=${TAG} docker compose run --rm -p 4040:4040 spark-submit
 
 stop:
-	HADOOP_TAG=${HADOOP_TAG} SPARK_TAG=${TAG} docker compose down
+	SPARK_TAG=${TAG} docker compose down
 
 start-spark-yarn:
 	HADOOP_TAG=${HADOOP_TAG} SPARK_TAG=${TAG} docker compose -f docker-compose-yarn.yml up namenode datanode resourcemanager nodemanager historyserver
