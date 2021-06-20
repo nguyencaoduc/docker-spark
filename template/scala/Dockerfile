@@ -1,4 +1,5 @@
-FROM bde2020/spark-submit:3.0.2-hadoop3.2
+ARG TAG
+FROM spark-submit:${TAG}
 
 LABEL maintainer="Gezim Sejdiu <g.sejdiu@gmail.com>, Giannis Mouchakis <gmouchakis@gmail.com>"
 
