@@ -1,6 +1,6 @@
-TAG=3.0.2-hadoop3.2
+TAG=3.0.2-hadoop2.7
 SPARK_VERSION=3.0.2
-SCALA_VERSION=2.11.12
+SCALA_VERSION=2.12.12
 
 build:
 	sh build.sh
